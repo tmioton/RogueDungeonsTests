@@ -1,3 +1,4 @@
+import argparse
 import pyglet
 from pyglet.window import key
 from miner_test.board import Board, size, texture_map
@@ -40,6 +41,9 @@ def on_key_press(symbol, modifiers):
     elif symbol == key.EQUAL:
         # print("going down")
         board.change_level(1)
+    elif symbol == key.F12:
+        pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot.png')
+        print("Screenshot saved to screenshot.png")
 
 
 def update(dt):
@@ -47,6 +51,17 @@ def update(dt):
     board.update(dt)
 
 
+def auto_close(dt):
+    pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot.png')
+    print("Screenshot saved to screenshot.png")
+    pyglet.app.exit()
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--auto-close', action='store_true', help='Automatically close the program and take a screenshot after 1 second')
+    args = parser.parse_args()
+
+    if args.auto_close:
+        pyglet.clock.schedule_once(auto_close, 1.0)
     pyglet.clock.schedule_interval(update, 1/60)
     pyglet.app.run()

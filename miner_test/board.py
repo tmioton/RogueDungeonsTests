@@ -83,22 +83,17 @@ pyglet.gl.glBlendFunc(
 
 for key in texture_map.keys():
     texture = texture_map[key]
-    gl.glEnable(gl.GL_TEXTURE_2D)
-    gl.glBindTexture(gl.GL_TEXTURE_2D, texture.id)
-    pyglet.gl.glTexParameteri(
-        pyglet.gl.GL_TEXTURE_2D,
-        pyglet.gl.GL_TEXTURE_MAG_FILTER,
-        pyglet.gl.GL_NEAREST
-    )
-    gl.glDisable(gl.GL_TEXTURE_2D)
+    gl.glBindTexture(texture.target, texture.id)
+    gl.glTexParameteri(texture.target, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+    gl.glTexParameteri(texture.target, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
     texture.width *= tex_size
     texture.height *= tex_size
 
-floors = pyglet.graphics.OrderedGroup(0)
-blocks = pyglet.graphics.OrderedGroup(1)
-miners = pyglet.graphics.OrderedGroup(2)
-lights = pyglet.graphics.OrderedGroup(3)
+floors = pyglet.graphics.Group(order=0)
+blocks = pyglet.graphics.Group(order=1)
+miners = pyglet.graphics.Group(order=2)
+lights = pyglet.graphics.Group(order=3)
 
 
 class Board:
@@ -154,7 +149,7 @@ class Board:
 
                         # range of OpenSimplex is -1 to 1. To retrieve a
                         # value between 0 and 1 the equation is (x + 1) / 2
-                        nval = (noise.noise3d(i / self.VEIN_SIZE, j / self.VEIN_SIZE, d / self.VEIN_SIZE) + 1) / 2
+                        nval = (noise.noise3(x=i / self.VEIN_SIZE, y=j / self.VEIN_SIZE, z=d / self.VEIN_SIZE) + 1) / 2
                         # nval = random()
                         if nval < self.ORE_CHANCE:
                             block = self.blocks[d][i][j]
